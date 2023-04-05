@@ -1,0 +1,69 @@
+{% extends '../base.twig' %}
+
+{% block content %}
+    {% if 'admin' in user.roles %}
+    <h2>Dostup iba pre admin</h2>
+    {% endif %}
+    <!-- FORM ADD POST AUTHORIZED USER -->
+    <form action="/post/new" method="post">
+        <div class="card mt-2">
+            <div class="card-header">Pridať nový príspevok</div>
+            <div class="card-body">
+                <label for="nazov">Nazov:</label>
+                <input type="text" class="form-control" name="nazov">
+                <label for="popis">Popis:</label>
+                <textarea class="form-control" name="popis"></textarea>
+                <label for="typ">Typ:</label>
+                <select class="form-control" name="typ">
+                    <option value="Koncert">Koncert</option>
+                    <option value="Divadlo">Divadlo</option>
+                    <option value="Vystava">Vystava</option>
+                    <option value="Zraz">Zraz</option>
+                </select>
+                <label for="dat_kon">Datum konania:</label>
+                <input type="text" placeholder="yyyy-mm-dd" class="form-control" name="dat_kon">
+                <label for="mie_kon">Miesto konania:</label>
+                <input type="text" class="form-control" name="mie_kon">
+                <label for="region">Region:</label>
+                <input type="text" class="form-control" name="region">
+            </div>
+            <div class="card-footer">
+                <input type="submit" class="btn btn-success float-end" value="Odoslať">
+            </div>
+        </div>
+        <!-- SORT POST BY ADMIN -->
+        {% if 'admin' in user.roles %}
+        <div class="nav-item dropdown" style="margin-top: 10px;">
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Zoradit podla:</a>
+            <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/post/orderbydateA"><i class="fa-solid fa-calendar"></i>  Zoradit podla datumu</a></li>
+                <li><a class="dropdown-item" href="/post/orderbynameA"><i class="fa-solid fa-arrow-down-a-z"></i>  Zoradit podla nazvu</a></li>
+                <li><a class="dropdown-item" href="/post/orderbyregionA"><i class="fa-solid fa-arrow-down-a-z"></i>  Zoradit podla regionu</a></li>
+            </ul>
+        </div>
+        {% endif %}
+    </form>
+    <!-- LOOP SHOW POSTS -->
+    {% if 'admin' in user.roles %}
+        {% for post in posts %}
+            <div class="card mt-4"  style="padding: 20px;">
+                <a href="/post/pod_info/{{ post.id }}">
+                    <div class="float-start">
+                        <h2 class="fa-solid" style="color:red">{{ post.nazov }}</h2> 
+                        <h3 class="fa-solid">{{ post.miesto_konania }}</h3> 
+                        &nbsp;
+                        
+                    </div>
+                    <div class="float-end">
+                        <i class="fa-regular" style="color:blue">{{ post.typ }}</i> 
+                        <i class="fa-regular" style="color:green">{{ post.region }}</i> 
+                        <i class="fa-regular">{{ post.datum_konania | date('d. m. Y') }}</i>
+                        <a class="badge bg-danger" href="/post/delete/{{ post.id }}"><i class="fa-solid fa-trash"></i></a>
+                        <a class="badge bg-info" href="/post/updatered/{{ post.id }}"><i class="fa-solid fa-pen"></i></a> 
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}
